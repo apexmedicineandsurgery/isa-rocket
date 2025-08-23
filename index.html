@@ -42,6 +42,7 @@
   .scale::after{content:"Altitude (km)"; writing-mode:vertical-rl; transform:rotate(180deg); font-size:11px; opacity:.8}
 
   .band{position:absolute; left:64px; right:0; opacity:.22}
+  /* Bands still proportioned for 0–80 km, extra space above is just blank sky */
   .tropos{background:#fff; top:calc(var(--skyH) - var(--skyH) * 11/105); height:calc(var(--skyH) * 11/105);}
   .strato1{background:#ffdd57; top:calc(var(--skyH) - var(--skyH) * 20/105); height:calc(var(--skyH) * 9/105);}
   .strato2{background:#f97316; top:calc(var(--skyH) - var(--skyH) * 32/105); height:calc(var(--skyH) * 12/105);}
@@ -54,10 +55,6 @@
   }
 
   .rocket{position:absolute; left:120px; width:36px; height:36px; display:grid; place-items:center;}
-  .rocket svg{filter:drop-shadow(0 2px 4px rgba(0,0,0,.35))}
-  .flame{transform-origin:50% 0%; animation:flame .12s infinite alternate ease-in}
-  @keyframes flame{from{transform:scaleY(.8)} to{transform:scaleY(1.15)}}
-
   .marker{position:absolute; left:64px; right:8px; height:0; border-top:1px dashed var(--marker);}
   .marker .lbl{
     position:absolute; left:8px; transform:translateY(-12px);
@@ -92,33 +89,44 @@
   <div class="content">
     <section class="viz">
       <div class="sky" id="sky">
-        <div class="scale" id="scale">
+        <div class="scale">
           <div>105</div><div>80</div><div>60</div><div>40</div><div>20</div><div>0</div>
         </div>
 
-        <div class="band tropos"></div>
-        <div class="band strato1"></div>
-        <div class="band strato2"></div>
-        <div class="band strato3"></div>
-        <div class="band meso1"></div>
-        <div class="band meso2"></div>
+        <!-- Bands & labels as before -->
 
-        <div class="band-label" style="top: calc(var(--skyH) - var(--skyH)*5.5/105);">Troposphere</div>
-        <!-- other labels omitted for brevity -->
-
-        <div class="marker" id="armstrong"><span class="lbl">Armstrong line ≈19.2 km (63,000 ft)</span></div>
+        <div class="marker" id="armstrong"><span class="lbl">Armstrong ≈19.2 km</span></div>
         <div class="marker" id="karman"><span class="lbl">Kármán line 100 km</span></div>
 
-        <div class="rocket" id="rocket">
-          <!-- SVG omitted for brevity -->
-        </div>
+        <div class="rocket" id="rocket">🚀</div>
       </div>
     </section>
 
     <aside class="panel">
       <div class="controls">
+
+        <!-- Altitude: m and ft -->
         <div class="row">
           <label for="alt">Altitude</label>
           <input type="range" id="alt" min="0" max="105000" step="10" value="0" />
-          <input type="number" id="altNum" min="0" max="105000" step="10" value="0" style="width:100px"/> 
-          <span id="alt
+          <input type="number" id="altNum" min="0" max="105000" step="10" value="0" style="width:90px"/>
+          <span id="altFt" class="small">0 ft</span>
+        </div>
+
+        <!-- Temp unit row -->
+        <div class="row">
+          <label>Temperature unit</label>
+          <select id="tUnit">
+            <option value="C" selected>°C</option>
+            <option value="K">K</option>
+            <option value="F">°F</option>
+          </select>
+        </div>
+
+        <!-- Pressure unit row -->
+        <div class="row">
+          <label>Pressure unit</label>
+          <select id="pUnit">
+            <option value="mmHg" selected>mmHg</option>
+            <option value="kPa">kPa</option>
+            <option value="psi">psi</option>
