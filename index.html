@@ -14,21 +14,30 @@
   }
   *{box-sizing:border-box}
   body{
-    margin:0; font:16px/1.45 system-ui,Segoe UI,Roboto,Arial,sans-serif; color:#0f172a; background:#f8fafc;
+    margin:0; font:16px/1.45 system-ui,Segoe UI,Roboto,Arial,sans-serif;
+    color:#0f172a; background:#f8fafc;
     display:flex; justify-content:center; padding:24px;
   }
   .app{
     width: min(100%, var(--w));
-    background:white; border:1px solid #e2e8f0; border-radius:12px; box-shadow:0 6px 24px rgba(2,6,23,.08);
+    background:white; border:1px solid #e2e8f0; border-radius:12px;
+    box-shadow:0 6px 24px rgba(2,6,23,.08);
     overflow:hidden;
   }
-  header{padding:16px 20px; border-bottom:1px solid #e2e8f0; display:flex; gap:12px; align-items:center; flex-wrap:wrap}
+  header{padding:16px 20px; border-bottom:1px solid #e2e8f0;
+    display:flex; gap:12px; align-items:center; flex-wrap:wrap}
   header h1{font-size:18px; margin:0}
   header .sub{color:#475569}
 
-  .content{display:flex; gap:16px; padding:16px; flex-wrap:wrap}
+  .content{
+    display:flex; flex-direction:row; gap:16px; padding:16px;
+    flex-wrap:nowrap; 
+  }
   .viz{flex:1 1 520px; min-width:420px}
-  .panel{flex:0 0 var(--panel); min-width:340px; border-left:1px solid #e2e8f0; padding:12px}
+  .panel{
+    flex:0 0 var(--panel); min-width:340px;
+    border-right:1px solid #e2e8f0; padding:12px;
+  }
 
   /* Atmosphere column */
   .sky{
@@ -37,20 +46,23 @@
     border:1px solid #dbeafe;
   }
   .scale{
-    position:absolute; left:8px; top:8px; bottom:8px; width:56px; background:rgba(255,255,255,.12); border-radius:8px;
+    position:absolute; left:8px; top:8px; bottom:8px; width:56px;
+    background:rgba(255,255,255,.12); border-radius:8px;
     color:#e2e8f0; font-size:12px;
   }
-  .scale .ticks{position:absolute; inset:8px 6px; display:flex; flex-direction:column; justify-content:space-between; align-items:center}
+  .scale .ticks{position:absolute; inset:8px 6px;
+    display:flex; flex-direction:column; justify-content:space-between; align-items:center}
   .scale .label{opacity:.95}
   .scale .axis{
-    position:absolute; right:4px; top:8px; bottom:8px; width:1px; background:rgba(226,232,240,.6);
+    position:absolute; right:4px; top:8px; bottom:8px;
+    width:1px; background:rgba(226,232,240,.6);
   }
   .scale::after{
-    content:"Altitude (km)"; position:absolute; left:2px; top:50%; transform:translateY(-50%) rotate(180deg);
+    content:"Altitude (km)"; position:absolute; left:2px; top:50%;
+    transform:translateY(-50%) rotate(180deg);
     writing-mode:vertical-rl; font-size:11px; opacity:.8
   }
 
-  /* Layer bands (visual only, sized to 0–80 km within a 0–105 km viewport) */
   .band{position:absolute; left:72px; right:0; opacity:.22}
   .tropos{background:#ffffff; top:calc(var(--skyH) - var(--skyH) * 11/105); height:calc(var(--skyH) * 11/105);}
   .strato1{background:#ffdd57; top:calc(var(--skyH) - var(--skyH) * 20/105); height:calc(var(--skyH) * 9/105);}
@@ -60,11 +72,11 @@
   .meso2{background:#60a5fa; top:calc(var(--skyH) - var(--skyH) * 71/105); height:calc(var(--skyH) * 20/105);}
 
   .band-label{
-    position:absolute; left:80px; font-size:12px; color:#0f172a; mix-blend-mode:luminosity; opacity:.9;
-    padding:2px 6px; border-radius:6px; background:rgba(255,255,255,.25)
+    position:absolute; left:80px; font-size:12px; color:#0f172a;
+    mix-blend-mode:luminosity; opacity:.9; padding:2px 6px;
+    border-radius:6px; background:rgba(255,255,255,.25)
   }
 
-  /* Rocket */
   .rocket{
     position:absolute; left:136px; width:36px; height:36px; transform:translateY(0);
     display:grid; place-items:center;
@@ -73,7 +85,6 @@
   .flame{transform-origin:50% 0%; animation:flame .12s infinite alternate ease-in}
   @keyframes flame{from{transform:scaleY(.8)} to{transform:scaleY(1.15)}}
 
-  /* Markers */
   .marker{
     position:absolute; left:72px; right:8px; height:0; border-top:1px dashed var(--marker);
   }
@@ -83,7 +94,6 @@
     white-space:nowrap;
   }
 
-  /* Controls */
   .controls{display:grid; gap:12px; padding:8px}
   .row{display:flex; align-items:center; gap:10px; flex-wrap:wrap}
   .row label{min-width:140px; color:#334155}
@@ -98,7 +108,6 @@
     padding:6px 8px; border:1px solid #cbd5e1; border-radius:8px; background:#fff;
   }
 
-  /* Readouts */
   .grid{
     display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:8px;
   }
@@ -119,6 +128,81 @@
     <h1>Standard Atmosphere Explorer</h1>
     <div class="sub">Interactive ISA (0–105 km) with rocket ascent, markers, and unit toggles</div>
   </header>
+
+
+
+    <aside class="panel">
+      <div class="controls">
+        <!-- Altitude: meters and feet (no decimals) -->
+        <div class="row">
+          <label for="alt">Altitude</label>
+          <input type="range" id="alt" min="0" max="80000" step="10" value="0" />
+          <input type="number" id="altNum" min="0" max="80000" step="10" value="0" style="width:120px"/> m
+          <span id="altFt" class="small" aria-live="polite">0 ft</span>
+        </div>
+
+      
+        <!-- Animation controls -->
+	<!-- Row 1: Play, Pause, Reset -->
+	<div class="row">
+ 	 <button class="btn" id="launch">Play launch</button>
+ 	 <button class="btn" id="pause" disabled>Pause</button>
+  	<button class="btn" id="reset">Reset</button>
+	</div>
+
+	<!-- Row 2: Rate slider -->
+	<div class="row">
+  	<span class="small">
+  	  Rate: <input type="range" id="rate" min="0.1" max="20" step="0.1" value="10">
+  	  <span id="rateLbl" class="small">10× speed</span>
+  	</span>
+	</div>
+
+      <!-- Readouts -->
+      <div class="grid">
+
+	<div class="card">
+  	<h3>Altitude</h3>
+  	<div><span class="val" id="alt_m">0</span><span class="unit">m</span></div>
+ 	 <div class="small"><span id="alt_ft">0</span> ft</div>
+	</div>
+
+        <div class="card">
+	<h3>Layer</h3>
+	<div class="val" id="layerName">Troposphere</div>
+	</div>
+
+        <div class="card">
+  	<h3>Temperature</h3>
+  	<div><span class="val" id="T_C">15.00</span><span class="unit">°C</span></div>
+  	<div><span class="val" id="T_F">59.00</span><span class="unit">°F</span></div>
+  	<div><span class="val" id="T_K">288.15</span><span class="unit">K</span></div>
+	</div>
+
+       <div class="card">
+ 	 <h3>Pressure</h3>
+	<div><span class="val" id="P_kPa">101.33</span><span class="unit">kPa</span></div>  	
+	<div><span class="val" id="P_psi">14.70</span><span class="unit">psi</span></div>
+  	<div><span class="val" id="P_mmHg">760.00</span><span class="unit">mmHg</span></div>
+	</div>
+
+        <div class="card"><h3>Density</h3>
+          <div><span class="val" id="rho">1.2250</span><span class="unit">kg/m³</span></div>
+        </div>
+
+	<div class="card"><h3>Vehicle speed</h3>
+	  <div><span class="val" id="Vnow">0.00</span><span class="unit">m/s</span></div>
+	</div>
+
+        <div class="card"><h3>Speed of sound</h3>
+          <div><span class="val" id="a">340.29</span><span class="unit">m/s</span></div>
+        </div>
+
+        <div class="card"><h3>Mach number</h3>
+          <div><span class="val" id="M">0.88</span><span class="unit">M</span></div>
+        </div>
+      </div>
+    </aside>
 
   <div class="content">
     <section class="viz">
@@ -147,11 +231,11 @@
         <!-- Labels -->
         <div class="band-label" style="top: calc(var(--skyH) - var(--skyH)*5.5/105);">Troposphere (0–11 km)</div>
         <div class="band-label" style="top: calc(var(--skyH) - var(--skyH)*16/105);">Lower Stratosphere (11–20 km)</div>
-        <div class="band-label" style="top: calc(var(--skyH) - var(--skyH)*28/105);">Mid Stratosphere (20–32 km)</div>
+        <div class="band-label" style="top: calc(var(--skyH) - var(--skyH)*28/105);">Middle Stratosphere (20–32 km)</div>
         <div class="band-label" style="top: calc(var(--skyH) - var(--skyH)*40/105);">Upper Stratosphere (32–47 km)</div>
         <div class="band-label" style="top: calc(var(--skyH) - var(--skyH)*50/105);">Stratopause (47–51 km)</div>
         <div class="band-label" style="top: calc(var(--skyH) - var(--skyH)*61/105);">Mesosphere (51–80 km)</div>
-        <div class="band-label" style="top: calc(var(--skyH) - var(--skyH)*90/105);">Thermosphere visual (80–600 km)</div>
+        <div class="band-label" style="top: calc(var(--skyH) - var(--skyH)*90/105);">Thermosphere (80–600 km)</div>
 
         <!-- Armstrong and Kármán markers -->
         <div class="marker" id="armstrong"><span class="lbl">Armstrong line ≈19.2 km (63,000 ft)</span></div>
@@ -179,82 +263,6 @@
       </div>
     </section>
 
-    <aside class="panel">
-      <div class="controls">
-        <!-- Altitude: meters and feet (no decimals) -->
-        <div class="row">
-          <label for="alt">Altitude</label>
-          <input type="range" id="alt" min="0" max="80000" step="10" value="0" />
-          <input type="number" id="altNum" min="0" max="80000" step="10" value="0" style="width:120px"/> m
-          <span id="altFt" class="small" aria-live="polite">0 ft</span>
-        </div>
-
-        <!-- Temperature unit row -->
-        <div class="row">
-          <label>Temperature unit</label>
-          <select id="tUnit">
-            <option value="C" selected>°C</option>
-            <option value="K">K</option>
-            <option value="F">°F</option>
-          </select>
-        </div>
-
-        <!-- Pressure unit row (moved below temperature unit) -->
-        <div class="row">
-          <label>Pressure unit</label>
-          <select id="pUnit">
-            <option value="mmHg" selected>mmHg</option>
-            <option value="kPa">kPa</option>
-            <option value="psi">psi</option>
-            <option value="Pa">Pa</option>
-          </select>
-        </div>
-
-        <!-- Vehicle speed for Mach -->
-        <div class="row">
-          <label>Vehicle speed</label>
-          <input type="number" id="speedVal" value="300" step="1" style="width:120px"/>
-          <select id="speedUnit">
-            <option value="mps" selected>m/s</option>
-            <option value="kts">kt</option>
-            <option value="kmph">km/h</option>
-            <option value="mph">mph</option>
-          </select>
-        </div>
-
-        <!-- Animation controls -->
-        <div class="row">
-          <button class="btn" id="launch">Play launch</button>
-          <button class="btn" id="pause" disabled>Pause</button>
-          <span class="small">Rate: <input type="range" id="rate" min="50" max="800" step="10" value="250"> <span id="rateLbl" class="small">250 m/s</span></span>
-        </div>
-      </div>
-
-      <!-- Readouts -->
-      <div class="grid">
-        <div class="card"><h3>Layer</h3><div class="val" id="layerName">Troposphere</div></div>
-
-        <div class="card"><h3>Temperature</h3>
-          <div><span class="val" id="T">15</span><span class="unit" id="Tunit">°C</span></div>
-        </div>
-
-        <div class="card"><h3>Pressure</h3>
-          <div><span class="val" id="P">760.00</span><span class="unit" id="Punit">mmHg</span></div>
-        </div>
-
-        <div class="card"><h3>Density</h3>
-          <div><span class="val" id="rho">1.2250</span><span class="unit">kg/m³</span></div>
-        </div>
-
-        <div class="card"><h3>Speed of sound</h3>
-          <div><span class="val" id="a">340.29</span><span class="unit">m/s</span></div>
-        </div>
-
-        <div class="card"><h3>Mach number</h3>
-          <div><span class="val" id="M">0.88</span><span class="unit">M</span></div>
-        </div>
-      </div>
-    </aside>
   </div>
 
   <footer>
@@ -284,11 +292,11 @@ const KARMAN_KM = 100 * 1000;  // 100 km
 const layers = [
   { hb:    0,    L: -0.0065, label: "Troposphere (0–11 km)" },
   { hb: 11000,   L:  0.0,    label: "Lower Stratosphere (11–20 km)" },
-  { hb: 20000,   L:  0.0010, label: "Stratosphere (20–32 km)" },
-  { hb: 32000,   L:  0.0028, label: "Stratosphere (32–47 km)" },
+  { hb: 20000,   L:  0.0010, label: "Middle Stratosphere (20–32 km)" },
+  { hb: 32000,   L:  0.0028, label: "Upper Stratosphere (32–47 km)" },
   { hb: 47000,   L:  0.0,    label: "Stratopause (47–51 km)" },
-  { hb: 51000,   L: -0.0028, label: "Mesosphere (51–71 km)" },
-  { hb: 71000,   L: -0.0020, label: "Mesosphere (71–80 km)" }
+  { hb: 51000,   L: -0.0028, label: "Lower Mesosphere (51–71 km)" },
+  { hb: 71000,   L: -0.0020, label: "Upper Mesosphere (71–80 km)" }
 ];
 
 /* Precompute base T and P for each layer for continuity */
@@ -345,21 +353,6 @@ function isa(h) {
 }
 
 /* Unit conversions */
-function toTemp(TK, unit) {
-  if (unit === 'K') return { val: TK, u: 'K' };
-  const C = TK - 273.15;
-  if (unit === 'C') return { val: C, u: '°C' };
-  return { val: (C * 9/5) + 32, u: '°F' };
-}
-function toPress(Pa, unit) {
-  switch(unit){
-    case 'mmHg': return { val: Pa * 760/101325, u: 'mmHg' };
-    case 'kPa':  return { val: Pa / 1000,       u: 'kPa' };
-    case 'psi':  return { val: Pa / 6894.75729, u: 'psi' };
-    case 'Pa':
-    default:     return { val: Pa,              u: 'Pa' };
-  }
-}
 function speedToMps(v, unit){
   switch(unit){
     case 'kts':  return v * 0.514444;
@@ -374,8 +367,6 @@ function speedToMps(v, unit){
 const alt = document.getElementById('alt');
 const altNum = document.getElementById('altNum');
 const altFt = document.getElementById('altFt');
-const TEl = document.getElementById('T');
-const PEl = document.getElementById('P');
 const rhoEl = document.getElementById('rho');
 const aEl = document.getElementById('a');
 const layerEl = document.getElementById('layerName');
@@ -385,15 +376,19 @@ const launchBtn = document.getElementById('launch');
 const pauseBtn = document.getElementById('pause');
 const rate = document.getElementById('rate');
 const rateLbl = document.getElementById('rateLbl');
-const tUnit = document.getElementById('tUnit');
-const pUnit = document.getElementById('pUnit');
-const Tunit = document.getElementById('Tunit');
-const Punit = document.getElementById('Punit');
-const speedVal = document.getElementById('speedVal');
-const speedUnit = document.getElementById('speedUnit');
+const resetBtn = document.getElementById('reset');
 const MEl = document.getElementById('M');
 const armLine = document.getElementById('armstrong');
 const karLine = document.getElementById('karman');
+const VnowEl = document.getElementById('Vnow');
+const T_C_El = document.getElementById('T_C');
+const T_F_El = document.getElementById('T_F');
+const T_K_El = document.getElementById('T_K');
+const P_mmHg_El = document.getElementById('P_mmHg');
+const P_psi_El  = document.getElementById('P_psi');
+const P_kPa_El  = document.getElementById('P_kPa');
+const alt_m_El = document.getElementById('alt_m');
+const alt_ft_El = document.getElementById('alt_ft');
 
 function fmt(n, d=2) { return n.toLocaleString(undefined, {maximumFractionDigits:d, minimumFractionDigits:d}); }
 function fmtInt(n) { return Math.round(n).toLocaleString(undefined, {maximumFractionDigits:0}); }
@@ -418,20 +413,28 @@ function updateUI(h){
   alt.value = hInt;
   altNum.value = hInt;           // meters, integer
   altFt.textContent = `${fmtInt(hInt * 3.28084)} ft`; // feet, integer
+  alt_m_El.textContent = fmtInt(hInt);
+  alt_ft_El.textContent = fmtInt(hInt * 3.28084);
 
   // Atmosphere state (clamped to 80 km for ISA)
   const state = isa(hInt);
   const { T:TK, P:Pa, rho, a, label } = state;
 
-  // Temperature
-  const t = toTemp(TK, tUnit.value);
-  TEl.textContent = (tUnit.value === 'K') ? fmt(t.val, 2) : fmt(t.val, 2);
-  Tunit.textContent = t.u;
+  // Temperature: show C, F, K simultaneously
+  const C = TK - 273.15;
+  const F = (C * 9/5) + 32;
+  const K = TK;
+  T_C_El.textContent = fmt(C, 2);
+  T_F_El.textContent = fmt(F, 2);
+  T_K_El.textContent = fmt(K, 2);
 
-  // Pressure
-  const p = toPress(Pa, pUnit.value);
-  PEl.textContent = fmt(p.val, (pUnit.value === 'Pa') ? 0 : 2);
-  Punit.textContent = p.u;
+  // Pressure: show mmHg, psi, kPa simultaneously
+  const mmHg = Pa * 760 / 101325;
+  const psi  = Pa / 6894.75729;
+  const kPa  = Pa / 1000;
+  P_mmHg_El.textContent = fmt(mmHg, 2);
+  P_psi_El.textContent  = fmt(psi, 2);
+  P_kPa_El.textContent  = fmt(kPa, 2);
 
   // Density & a (fixed units)
   rhoEl.textContent = fmt(rho, 4);
@@ -439,8 +442,11 @@ function updateUI(h){
   layerEl.textContent = label;
 
   // Mach from user speed
-  const vMps = speedToMps(parseFloat(speedVal.value) || 0, speedUnit.value);
-  const M = a > 0 ? vMps / a : 0;
+
+
+  // Vehicle speed and Mach from current ascent state
+  VnowEl.textContent = fmt(vNowCurrent, 2);
+  const M = a > 0 ? vNowCurrent / a : 0;
   MEl.textContent = fmt(M, 3);
 
   // Move rocket (center offset for SVG height)
@@ -448,26 +454,131 @@ function updateUI(h){
   rocket.style.transform = `translateY(${y}px)`;
 }
 
+// --- Falcon 9 + Dragon ascent (proper Gx, real-time) ---
+const BASELINE_TIME = 540;  // seconds to ~SECO-1
+const DT = 0.05;            // integration step (s)
+
+// Proper crew G timeline (coarse but realistic shape)
+// Events: liftoff, Max Q bucket, MECO, sep/coast, S2 ignition, ramp, SECO.
+const accelProfile = [
+  // Stage 1
+  { t:   0, g: 1.15 },  // liftoff (>1g proper)
+  { t:  10, g: 1.25 },
+  { t:  50, g: 2.10 },
+  { t:  70, g: 1.60 },  // throttle bucket near Max Q
+  { t: 120, g: 2.50 },
+  { t: 145, g: 3.30 },  // rising as mass drops
+  { t: 150, g: 1.50 },  // pre-MECO throttle down
+  { t: 153, g: 0.00 },  // MECO
+  // Sep/coast
+  { t: 158, g: 0.00 },
+  // Stage 2
+  { t: 165, g: 0.60 },
+  { t: 240, g: 1.20 },
+  { t: 360, g: 2.00 },
+  { t: 480, g: 3.00 },
+  { t: 520, g: 3.60 },  // cap under ~4g for crew comfort
+  { t: 535, g: 2.00 },  // throttle down before SECO
+  { t: 540, g: 0.00 }   // SECO-1
+];
+
+// Interpolate proper G at time t
+function gProperAt(t){
+  if (t <= accelProfile[0].t) return accelProfile[0].g;
+  for (let i = 0; i < accelProfile.length - 1; i++) {
+    const a = accelProfile[i], b = accelProfile[i+1];
+    if (t >= a.t && t <= b.t) {
+      const f = (t - a.t) / (b.t - a.t);
+      return a.g + f * (b.g - a.g);
+    }
+  }
+  return accelProfile[accelProfile.length - 1].g;
+}
+
+// Build baseline table: time, altitude, velocity
+let baselineTable = [];
+(function buildBaseline(){
+  let v = 0, h = 0;
+  for (let t = 0; t <= BASELINE_TIME + 1e-9; t += DT) {
+    // Proper (felt) g -> net vertical acceleration: subtract gravity
+    const gProper = gProperAt(t);
+    const a_net = (gProper - 1) * g0;  // m/s^2
+
+    v += a_net * DT;           // m/s
+    h += Math.max(0, v) * DT;  // m (prevent negative altitude dips)
+
+    baselineTable.push({ t, alt: h, vel: v });
+  }
+})();
+
 /* Animation */
 let anim = null;
-function tick(tsPrev, lastH){
-  anim = requestAnimationFrame((tsNow) => {
-    const dt = Math.min(1/30, (tsNow - tsPrev)/1000); // cap timestep
-    const v = parseFloat(rate.value); // m/s ascent rate (visual only)
-    const h = Math.min(MAX_ALT, lastH + v*dt);
+let vNowCurrent = 0;
+let startPerf = null;
+let pausedTime = 0;
+let playbackRate = 1;      // baseline 1×
+rate.value = 1;
+rateLbl.textContent = "1× speed";
+
+
+function tick(tsNow) {
+  if (!startPerf) startPerf = tsNow;
+  const elapsedReal = (tsNow - startPerf) / 1000;
+
+  // Physics time scales with Rate
+  const elapsedPhysics = pausedTime + elapsedReal * playbackRate;
+  const tNow = Math.min(elapsedPhysics, BASELINE_TIME);
+
+  // Index into baseline by DT (fast and stable)
+  let i = Math.floor(tNow / DT);
+  if (i >= baselineTable.length) i = baselineTable.length - 1;
+
+  const point = baselineTable[i];
+  let h = point.alt;
+  const v = point.vel;
+
+  // ⛔ Stop if we hit or exceed 80 km
+  if (h >= 80000) {
+    h = 80000;          // lock the display
+    vNowCurrent = 0;    // freeze velocity readout (optional)
     updateUI(h);
-    if (h >= MAX_ALT) { stop(); return; }
-    tick(tsNow, h);
-  });
+    stop();
+    return;             // exit tick()
+  }
+
+  vNowCurrent = v;
+  updateUI(h);
+
+  if (tNow < BASELINE_TIME) {
+    anim = requestAnimationFrame(tick);
+  } else {
+    stop();
+  }
 }
-function start(){
-  launchBtn.disabled = true; pauseBtn.disabled = false;
-  const startH = parseFloat(alt.value) || 0;
-  const now = performance.now();
-  tick(now, startH);
+
+
+function start() {
+  if (pausedTime >= BASELINE_TIME) {
+    pausedTime = 0; // restart
+  }
+  startPerf = null;
+  launchBtn.disabled = true;
+  pauseBtn.disabled = false;
+  anim = requestAnimationFrame(tick);
 }
-function stop(){
-  launchBtn.disabled = false; pauseBtn.disabled = true;
+
+function stop() {
+  if (startPerf !== null) {
+    const elapsedReal = (performance.now() - startPerf) / 1000;
+    pausedTime += elapsedReal * playbackRate;
+  }
+  // if run completed, reset pausedTime
+  if (pausedTime >= BASELINE_TIME) {
+    pausedTime = 0;
+  }
+
+  launchBtn.disabled = false;
+  pauseBtn.disabled = true;
   if (anim) cancelAnimationFrame(anim);
   anim = null;
 }
@@ -477,11 +588,31 @@ alt.addEventListener('input', e => updateUI(parseFloat(e.target.value)));
 altNum.addEventListener('input', e => updateUI(parseFloat(e.target.value)||0));
 launchBtn.addEventListener('click', start);
 pauseBtn.addEventListener('click', stop);
-rate.addEventListener('input', e => rateLbl.textContent = `${e.target.value} m/s`);
-tUnit.addEventListener('change', () => updateUI(parseFloat(alt.value)));
-pUnit.addEventListener('change', () => updateUI(parseFloat(alt.value)));
-speedVal.addEventListener('input', () => updateUI(parseFloat(alt.value)));
-speedUnit.addEventListener('change', () => updateUI(parseFloat(alt.value)));
+
+function resetAnim() {
+  if (anim) cancelAnimationFrame(anim);
+  anim = null;
+  startPerf = null;
+  pausedTime = 0;
+  vNowCurrent = 0;
+
+  updateUI(0);
+
+  playbackRate = 1;
+  rate.value = 1;
+  rateLbl.textContent = "1× speed";
+
+  launchBtn.disabled = false;
+  pauseBtn.disabled = true;
+}
+
+resetBtn.addEventListener('click', resetAnim);
+
+rate.addEventListener('input', e => {
+  playbackRate = parseFloat(e.target.value);
+  rateLbl.textContent = `${playbackRate.toFixed(1)}× speed`;
+});
+
 window.addEventListener('resize', positionMarkers);
 
 /* Init */
